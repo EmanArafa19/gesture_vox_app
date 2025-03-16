@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gesture_vox_app/pages/settings_page.dart';
 import 'package:gesture_vox_app/pages/home_page.dart';
 
-
 void main() {
   runApp(
     MultiBlocProvider(
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
-          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,      
           home:  HomeScreen(),
         );
       },
