@@ -9,51 +9,54 @@ class AboutUsPage extends StatelessWidget {
       builder: (context, language) {
         return Scaffold(
           appBar: AppBar(
-            title: Center(
-              child: Text(
+          centerTitle: true, 
+          title: Text(
                 language == 'عربي' ? 'معلومات عنا' : 'About Us',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            leading: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(3),
-                      side: BorderSide(
-                        color: const Color.fromRGBO(159, 102, 198, 1),
-                        width: 1.5,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      size: 18,
-                      color: const Color.fromRGBO(159, 102, 198, 1),
-                    ),
-                  ),
-                  Text(
-                    language == 'عربي' ? 'رجوع' : 'Back',
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.black
-                          : Colors.white,
-                    ),
-                  ),
-                ],
+          
+          leading: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 35,
+            height: 30,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.zero,
+                side: BorderSide(
+                  color: const Color.fromRGBO(159, 102, 198, 1),
+                  width: 1.5,
+                ),
+              ),
+              onPressed: () => Navigator.pop(context),
+              child: Icon(
+                Icons.arrow_back,
+                size: 14,
+                color: const Color.fromRGBO(159, 102, 198, 1),
               ),
             ),
           ),
-          body: Padding(
+          Text(
+            language == 'عربي' ? 'رجوع' : 'Back',
+            style: TextStyle(
+              fontSize: 9,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white,
+        ),
+      ),
+    ],
+  ),
+),
+          ),
+          body:  SingleChildScrollView(
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
+             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
@@ -110,6 +113,7 @@ class AboutUsPage extends StatelessWidget {
               ],
             ),
           ),
+        ),
         );
       },
     );
