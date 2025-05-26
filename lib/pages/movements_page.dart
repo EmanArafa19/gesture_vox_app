@@ -36,19 +36,19 @@ class _MovementsPageState extends State<MovementsPage> {
       if (streamedResponse.statusCode == 307) {
         final redirectedUrl = streamedResponse.headers['location'];
         if (redirectedUrl != null) {
-          print('📍 Redirecting to: $redirectedUrl');
+          print('Redirecting to: $redirectedUrl');
           uri = Uri.parse(redirectedUrl);
           request = http.MultipartRequest('POST', uri);
           request.fields['text'] = widget.translatedText;
           streamedResponse = await request.send();
         } else {
-          print('❌ No redirect location provided.');
+          print(' No redirect location provided.');
           return;
         }
       }
 
       final responseBody = await streamedResponse.stream.bytesToString();
-      print('📥 Response body: $responseBody');
+      print(' Response body: $responseBody');
 
       if (streamedResponse.statusCode == 200) {
         final data = jsonDecode(responseBody);
