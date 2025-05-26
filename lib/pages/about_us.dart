@@ -16,7 +16,7 @@ class AboutUsPage extends StatelessWidget {
               ),
           
           leading: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -40,15 +40,7 @@ class AboutUsPage extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            language == 'عربي' ? 'رجوع' : 'Back',
-            style: TextStyle(
-              fontSize: 9,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-        ),
-      ),
+          
     ],
   ),
 ),

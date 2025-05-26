@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gesture_vox_app/pages/settings_page.dart';
+import 'package:gesture_vox_app/pages/background.dart';
+import 'package:gesture_vox_app/pages/bottom_nav_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RecordingPage extends StatefulWidget {
   @override
   _RecordingPageState createState() => _RecordingPageState();
 }
 
-class _RecordingPageState extends State<RecordingPage> {
+class _RecordingPageState extends State<RecordingPage>
+    with SingleTickerProviderStateMixin {
   late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = "";
@@ -17,10 +21,18 @@ class _RecordingPageState extends State<RecordingPage> {
   Timer? _timer;
   final int _maxSeconds = 60;
 
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+    _animation = Tween<double>(begin: 1.0, end: 1.0).animate(_animationController);
   }
 
   void _startListening() async {
@@ -29,14 +41,17 @@ class _RecordingPageState extends State<RecordingPage> {
       setState(() {
         _isListening = true;
         _seconds = 0;
+        _animation = Tween<double>(begin: 1.0, end: 1.07).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+        );
+        _animationController.repeat(reverse: true);
       });
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _text = result.recognizedWords;
-          });
-        },
-      );
+
+      _speech.listen(onResult: (result) {
+        setState(() {
+          _text = result.recognizedWords;
+        });
+      });
       _startTimer();
     }
   }
@@ -44,7 +59,11 @@ class _RecordingPageState extends State<RecordingPage> {
   void _stopListening() {
     _speech.stop();
     _stopTimer();
-    setState(() => _isListening = false);
+    setState(() {
+      _isListening = false;
+      _animationController.stop();
+      _animation = Tween<double>(begin: 1.0, end: 1.0).animate(_animationController);
+    });
   }
 
   void _startTimer() {
@@ -55,7 +74,7 @@ class _RecordingPageState extends State<RecordingPage> {
           _seconds++;
         });
       } else {
-        _stopListening(); // إيقاف التسجيل تلقائيًا بعد 60 ثانية
+        _stopListening();
       }
     });
   }
@@ -74,6 +93,10 @@ class _RecordingPageState extends State<RecordingPage> {
   void dispose() {
     _speech.stop();
     _stopTimer();
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    }
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -87,13 +110,13 @@ class _RecordingPageState extends State<RecordingPage> {
         title: BlocBuilder<LanguageCubit, String>(
           builder: (context, language) {
             return Text(
-              language == 'عربي' ? 'مترجم الكلمات' : 'Word Translator',
+              language == 'عربي' ? 'تسجيل الصوت' : 'Audio Recording',
               style: TextStyle(fontWeight: FontWeight.bold),
             );
           },
         ),
         leading: Padding(
-          padding: const EdgeInsets.all(5.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -117,90 +140,87 @@ class _RecordingPageState extends State<RecordingPage> {
                   ),
                 ),
               ),
-              BlocBuilder<LanguageCubit, String>(
-                builder: (context, language) {
-                  return Text(
-                    language == 'عربي' ? 'رجوع' : 'Back',
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.black
-                          : Colors.white,
-                    ),
-                  );
-                },
-              ),
             ],
           ),
         ),
       ),
       body: BlocBuilder<LanguageCubit, String>(
         builder: (context, language) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 65,
-                    height: 65,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 6,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color.fromRGBO(159, 102, 198, 1),
+          return BackgroundWidget(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      height: 220,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 6,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          const Color.fromRGBO(159, 102, 198, 1),
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    _formatTime(_seconds),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.black
-                          : Colors.white,
+                    ScaleTransition(
+                      scale: _animation,
+                      child: Image.asset(
+                        'assets/images/anim.png',
+                        width: 200,
+                        height: 200,
+                      ),
                     ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Text(
+                  _formatTime(_seconds),
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                language == 'عربي' ? "جاري التسجيل" : "Recording",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildCircleButton(
-                    icon: Icons.close,
-                    label: language == 'عربي' ? "إلغاء" : "Cancel",
-                    onPressed: () => Navigator.pop(context, ""),
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(width: 20),
-                  _buildCircleButton(
-                    icon: _isListening ? Icons.pause : Icons.play_arrow,
-                    label: language == 'عربي' ? "ابدأ" : "Start",
-                    onPressed: _isListening ? _stopListening : _startListening,
-                    size: 70,
-                    color: const Color.fromRGBO(159, 102, 198, 1),
-                  ),
-                  SizedBox(width: 20),
-                  _buildCircleButton(
-                    icon: Icons.send,
-                    label: language == 'عربي' ? "إنهاء" : "Finish",
-                    onPressed: () => Navigator.pop(context, _text),
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildCircleButton(
+                      icon: Icon(Icons.close, color: const Color.fromRGBO(159, 102, 198, 1)),
+                      label: "",
+                      onPressed: () => Navigator.pop(context, ""),
+                      size: 50,
+                    ),
+                    SizedBox(width: 20),
+                    _buildCircleButton(
+                      icon: Icon( 
+                        _isListening ? Icons.pause : Icons.stop,
+                        color: const Color.fromRGBO(159, 102, 198, 1),
+                      ),
+                      label: "",
+                      onPressed: _isListening ? _stopListening : _startListening,
+                      size: 70,
+                    ),
+                    SizedBox(width: 20),
+                    _buildCircleButton(
+                      icon: SvgPicture.asset(
+                        'assets/icons/done.svg',
+                        height: 20,
+                        width: 20,
+                      ),
+                      label: "",
+                      onPressed: () => Navigator.pop(context, _text),
+                      size: 50,
+                    )
+                  ],
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -208,22 +228,29 @@ class _RecordingPageState extends State<RecordingPage> {
   }
 
   Widget _buildCircleButton({
-    required IconData icon,
+    required Widget icon,
     required String label,
     required VoidCallback onPressed,
     required double size,
-    required Color color,
   }) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            shape: CircleBorder(),
-            padding: EdgeInsets.all(size / 4),
-            backgroundColor: color,
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            border: Border.all(
+              color: const Color.fromRGBO(159, 102, 198, 1),
+              width: 2,
+            ),
           ),
-          child: Icon(icon, color: Colors.white, size: size / 2),
+          child: IconButton(
+            onPressed: onPressed,
+            icon: icon,
+            iconSize: size / 2,
+          ),
         ),
         SizedBox(height: 5),
         Text(

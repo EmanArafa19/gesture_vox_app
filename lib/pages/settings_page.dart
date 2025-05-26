@@ -8,6 +8,7 @@ import 'package:gesture_vox_app/pages/Terms_and_conditions.dart';
 import 'package:gesture_vox_app/pages/home_page.dart';
 import 'package:gesture_vox_app/pages/background.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
  
 class ThemeCubit extends Cubit<bool> {
@@ -35,7 +36,7 @@ class SettingsPage extends StatelessWidget {
               ),
             
           leading: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -59,15 +60,7 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            language == 'عربي' ? 'رجوع' : 'Back',
-            style: TextStyle(
-              fontSize: 9,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-        ),
-      ),
+          
     ],
   ),
 ),
@@ -181,7 +174,11 @@ class SettingsBody extends StatelessWidget {
               builder: (context) => PrivacyPolicyPage(),
             ),
           );
-        } else if (title == 'Language') {
+        } 
+        else if (title == 'Share App') {
+  Share.share('[App Link]');
+}
+else if (title == 'Language') {
           _showLanguageDialog(context);
         }  else if (title == 'About us') {
            Navigator.push(
@@ -210,13 +207,17 @@ class SettingsBody extends StatelessWidget {
         else if (title == 'Rate App') {
           _launchURL('https://play.google.com/store');
         } else if (title == 'Contact Us' || title == 'Report Problem') {
-          _launchURL('https://mail.google.com');
+        _launchURL('https://mail.google.com');
+
+
         }
         
       },
     );
   }
-  
+
+
+
   void _showLanguageDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -261,11 +262,13 @@ class SettingsBody extends StatelessWidget {
   );
 }
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+void _launchURL(String urlString) async {
+  Uri url = Uri.parse(urlString); // تحويل الرابط إلى Uri
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    debugPrint('Could not launch $url');
   }
+}
+
 }

@@ -15,7 +15,7 @@ class TermsAndConditionsPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
             ),
         leading: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -39,15 +39,7 @@ class TermsAndConditionsPage extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            language == 'عربي' ? 'رجوع' : 'Back',
-            style: TextStyle(
-              fontSize: 9,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-        ),
-      ),
+          
     ],
   ),
 ),

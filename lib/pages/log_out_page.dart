@@ -24,7 +24,7 @@ class _LogOutPageState extends State<LogOutPage> {
               ),
             
         leading: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -48,15 +48,7 @@ class _LogOutPageState extends State<LogOutPage> {
               ),
             ),
           ),
-          Text(
-            language == 'عربي' ? 'رجوع' : 'Back',
-            style: TextStyle(
-              fontSize: 9,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-        ),
-      ),
+          
     ],
   ),
 ),
@@ -107,7 +99,7 @@ class _LogOutPageState extends State<LogOutPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(159, 102, 198, 1),
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
                   child: Text(
                     language == 'عربي' ? "خروج" : "Exit",
@@ -123,35 +115,56 @@ class _LogOutPageState extends State<LogOutPage> {
     );
   }
 
-  Widget _buildTextField({required String label, required String hintText, required IconData icon}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 5),
-        TextField(
-          obscureText: label.contains("Password") && !_isPasswordVisible,  
-          decoration: InputDecoration(
-            hintText: hintText,
-            filled: true,
-            fillColor: const Color.fromRGBO(159, 102, 198, 1).withOpacity(0.1),
-            suffixIcon: label.contains("Password")
-                ? IconButton(
-                    icon: Icon(icon),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
+Widget _buildTextField({required String label, required String hintText, required IconData icon}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+      SizedBox(height: 5),
+      TextField(
+        obscureText: label.contains("Password") && !_isPasswordVisible,  
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: Color.fromRGBO(132, 136, 141, 1),
+          ),
+          filled: true,
+          fillColor: const Color.fromRGBO(159, 102, 198, 0.2),
+          // أيقونة الإسم على اليمين (تظهر فقط إذا لم يكن الحقل خاصًا بكلمة المرور)
+          suffixIcon: label.contains("Password")
+              ? IconButton( // أيقونة كلمة المرور (تظهر/تختفي)
+                  icon: Icon(icon),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                )
+              : Icon(icon), // أيقونة الإسم (دائمة)
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(159, 102, 198, 1),
+              width: 1.5,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(151, 151, 151, 1),
+              width: 1.5,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(159, 102, 198, 1),
+              width: 2,
             ),
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

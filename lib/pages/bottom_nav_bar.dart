@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -10,92 +11,86 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     Color backgroundColor = isDarkMode ? Colors.black : Colors.white;
-    Color iconColor = isDarkMode ? Colors.white : Colors.black;
+    Color iconColor =
+        const Color.fromRGBO(157, 178, 206, 1);
     Color selectedColor = const Color.fromRGBO(159, 102, 198, 1);
+    Color fabIconColor = isDarkMode ? Colors.black : Colors.white;
 
-    
     List<Map<String, dynamic>> items = [
-      {"icon": "assets/icons/home1.png", "label": "Home", "width": 29.0},
-      {"icon": "assets/icons/sign1.png", "label": "Sign", "width": 39.0},
+      {"icon": "assets/icons/home1.svg", "label": "Home", "width": 22.0},
+      {"icon": "assets/icons/sign1.svg", "label": "Sign", "width": 30.0},
       {"icon": "", "label": "", "width": 0.0},
-      {"icon": "assets/icons/Group.png", "label": "Word", "width": 34.0},
-      {"icon": "assets/icons/settings1.png", "label": "Settings", "width": 29.0},
+      {"icon": "assets/icons/Group.svg", "label": "Word", "width": 23.0},
+      {"icon": "assets/icons/settings1.svg", "label": "Settings", "width": 25.0},
     ];
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
+        ClipPath(
           child: Container(
+            height: 60,
             color: backgroundColor,
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: backgroundColor,
-              currentIndex: selectedIndex,
-              selectedItemColor: selectedColor,
-              unselectedItemColor: iconColor,
-              onTap: onItemTapped,
-              items: List.generate(items.length, (index) {
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(items.length, (index) {
                 if (index == 2) {
-                  return const BottomNavigationBarItem(
-                    icon: SizedBox.shrink(),
-                    label: "",
-                  );
+                  return const SizedBox(width: 60);
                 }
-                return BottomNavigationBarItem(
-                  icon: Column(
+                return GestureDetector(
+                  onTap: () => onItemTapped(index),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(
-                        items[index]["icon"]!,
-                        width: items[index]["width"], 
-                        color: selectedIndex == index ? selectedColor : iconColor,
-                      ),
-                      if (selectedIndex == index) 
-                        Text(
-                          items[index]["label"]!,
-                          style: TextStyle(
-                            color: selectedColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      const SizedBox(height:7),
+                      SvgPicture.asset(
+                        items[index]["icon"],
+                        width: items[index]["width"],
+                        colorFilter: ColorFilter.mode(
+                          selectedIndex == index ? selectedColor : iconColor,
+                          BlendMode.srcIn,
                         ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        selectedIndex == index ? items[index]["label"] : "",
+                        style: TextStyle(
+                          color: selectedColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
-                  label: "",
                 );
               }),
             ),
           ),
         ),
 
-        
         Positioned(
-          bottom: 45,
-          left: MediaQuery.of(context).size.width / 2 - 30,
+          bottom: 25,
+          left: MediaQuery.of(context).size.width / 2 - 35,
           child: Container(
-            width: 60,
-            height: 60,
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: selectedColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: selectedColor.withOpacity(0.7),
                   blurRadius: 8,
                   spreadRadius: 2,
-                  offset: const Offset(0, 4),
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
             child: Center(
-              child: Image.asset(
-                "assets/icons/chat.png",
+              child: SvgPicture.asset(
+                "assets/icons/chat.svg",
                 width: 30,
-                color: Colors.white,
+                colorFilter: ColorFilter.mode(fabIconColor, BlendMode.srcIn),
               ),
             ),
           ),
